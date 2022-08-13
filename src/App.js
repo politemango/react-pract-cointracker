@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
 function App() {
+
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+
+  useEffect(()=>{
+    fetch("https://api.coinpaprika.com/v1/tickers").then((response)=>response.json()).then(
+      (json)=>{
+        setCoins(json);
+        setLoading(false);
+      }
+    )
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Coin tracker</h1>
+      {loading ? <h3>Loading...</h3> : null}
+      <hr/>
+      <ul>
+      {coins.map((coin)=>
+        <li>{coin.name}({coin.symbol}) : ${coin.quotes.USD.price}</li>
+      )}
+      </ul>
     </div>
   );
 }
